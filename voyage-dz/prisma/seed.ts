@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
@@ -8,15 +9,35 @@ async function main() {
   await prisma.agency.deleteMany({});
   await prisma.user.deleteMany({});
 
+  // Create Users (for agency dashboard access)
+  const hashedPassword1 = await bcrypt.hash('password123', 12);
+  const user1 = await prisma.user.create({
+    data: {
+      email: 'agency1@example.com',
+      password: hashedPassword1,
+      role: 'agency',
+    },
+  });
+
+  const hashedPassword2 = await bcrypt.hash('password456', 12);
+  const user2 = await prisma.user.create({
+    data: {
+      email: 'agency2@example.com',
+      password: hashedPassword2,
+      role: 'agency',
+    },
+  });
+
   // Create Agencies
   const agency1 = await prisma.agency.create({
     data: {
       name: 'Sahara Adventures',
       description: 'Explore the vast beauty of the Algerian Sahara.',
       phone: '123-456-7890',
-      email: 'contact@sahara-adventures.com',
+      email: 'agency1@example.com',
       city: 'Djanet',
       logoUrl: 'https://example.com/logo1.png',
+      userId: user1.id,
     },
   });
 
@@ -25,9 +46,10 @@ async function main() {
       name: 'Mediterranean Tours',
       description: 'Discover the stunning coastline of Algeria.',
       phone: '098-765-4321',
-      email: 'info@med-tours.com',
+      email: 'agency2@example.com',
       city: 'Algiers',
       logoUrl: 'https://example.com/logo2.png',
+      userId: user2.id,
     },
   });
 
@@ -57,23 +79,6 @@ async function main() {
       endDate: new Date('2024-10-18'),
       imageUrls: ['https://example.com/algiers1.jpg', 'https://example.com/algiers2.jpg'],
       agencyId: agency2.id,
-    },
-  });
-
-  // Create Users (for agency dashboard access)
-  await prisma.user.create({
-    data: {
-      email: 'agency1@example.com',
-      password: 'password123', // In a real app, this would be hashed
-      role: 'agency',
-    },
-  });
-
-  await prisma.user.create({
-    data: {
-      email: 'agency2@example.com',
-      password: 'password456', // In a real app, this would be hashed
-      role: 'agency',
     },
   });
 }

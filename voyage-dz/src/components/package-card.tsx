@@ -16,9 +16,8 @@ export function PackageCard({ pkg }: PackageCardProps) {
             <Image
               src={pkg.imageUrls[0] || "/placeholder.svg"}
               alt={pkg.title}
-              layout="fill"
-              objectFit="cover"
-              className="rounded-t-lg"
+              fill
+              className="rounded-t-lg object-cover"
             />
           </div>
         </CardHeader>

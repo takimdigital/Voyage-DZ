@@ -20,6 +20,8 @@ model Agency {
   logoUrl     String?
   packages    Package[]
   createdAt   DateTime  @default(now())
+  user        User?     @relation(fields: [userId], references: [id])
+  userId      Int?      @unique
 }
 
 model Package {
@@ -43,4 +45,5 @@ model User {
   password  String
   role      String   @default("agency")
   createdAt DateTime @default(now())
+  agency    Agency?
 }

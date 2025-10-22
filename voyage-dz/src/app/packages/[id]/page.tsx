@@ -34,9 +34,8 @@ export default async function PackageDetailPage({
         <Image
           src={pkg.imageUrls[0] || "/placeholder.svg"}
           alt={pkg.title}
-          layout="fill"
-          objectFit="cover"
-          className="rounded-lg"
+          fill
+          className="rounded-lg object-cover"
         />
       </div>
 
