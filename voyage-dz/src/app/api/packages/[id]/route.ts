@@ -8,7 +8,7 @@ export async function GET(
   try {
     const pkg = await db.package.findUnique({
       where: {
-        id: parseInt(params.id, 10),
+        id: params.id,
       },
       include: {
         agency: true,

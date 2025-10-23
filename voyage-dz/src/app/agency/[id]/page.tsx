@@ -2,12 +2,13 @@ import { db } from "@/lib/db";
 import { Agency, Package } from "@prisma/client";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PackageCard } from "@/components/package-card";
 
 type AgencyWithPackages = Agency & { packages: Package[] };
 
-async function getAgency(id: number): Promise<AgencyWithPackages | null> {
+async function getAgency(id: string): Promise<AgencyWithPackages | null> {
   const agency = await db.agency.findUnique({
     where: { id },
     include: { packages: true },
@@ -15,12 +16,47 @@ async function getAgency(id: number): Promise<AgencyWithPackages | null> {
   return agency;
 }
 
+type Props = {
+  params: { id: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const agency = await getAgency(params.id);
+
+  if (!agency) {
+    return {
+      title: "Agency Not Found | Voyage DZ",
+    };
+  }
+
+  const title = `${agency.name} - Travel Agency in ${agency.city} | Voyage DZ`;
+  const description = agency.description?.substring(0, 160) || `Find the best travel packages from ${agency.name}.`;
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: agency.logoUrl || "/placeholder.svg",
+          width: 800,
+          height: 600,
+          alt: agency.name,
+        },
+      ],
+    },
+  };
+}
+
+
 export default async function AgencyProfilePage({
   params,
 }: {
   params: { id: string };
 }) {
-  const agency = await getAgency(parseInt(params.id, 10));
+  const agency = await getAgency(params.id);
 
   if (!agency) {
     notFound();

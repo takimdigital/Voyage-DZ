@@ -2,13 +2,15 @@ import { db } from "@/lib/db";
 import { Package, Agency } from "@prisma/client";
 import { notFound } from "next/navigation";
 import Image from "next/image";
+import type { Metadata } from "next";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { SocialShareButtons } from "@/components/social-share-buttons";
 
 type PackageWithAgency = Package & { agency: Agency };
 
-async function getPackage(id: number): Promise<PackageWithAgency | null> {
+async function getPackage(id: string): Promise<PackageWithAgency | null> {
   const pkg = await db.package.findUnique({
     where: { id },
     include: { agency: true },
@@ -16,12 +18,46 @@ async function getPackage(id: number): Promise<PackageWithAgency | null> {
   return pkg;
 }
 
+type Props = {
+  params: { id: string };
+};
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const pkg = await getPackage(params.id);
+
+  if (!pkg) {
+    return {
+      title: "Package Not Found | Voyage DZ",
+    };
+  }
+
+  const title = `${pkg.title} | Voyage DZ`;
+  const description = pkg.description.substring(0, 160);
+
+  return {
+    title,
+    description,
+    openGraph: {
+      title,
+      description,
+      images: [
+        {
+          url: pkg.imageUrls[0] || "/placeholder.svg",
+          width: 1200,
+          height: 630,
+          alt: pkg.title,
+        },
+      ],
+    },
+  };
+}
+
 export default async function PackageDetailPage({
   params,
 }: {
   params: { id: string };
 }) {
-  const pkg = await getPackage(parseInt(params.id, 10));
+  const pkg = await getPackage(params.id);
 
   if (!pkg) {
     notFound();
@@ -56,6 +92,7 @@ export default async function PackageDetailPage({
               <p>Itinerary details coming soon.</p>
             </TabsContent>
           </Tabs>
+            <SocialShareButtons title={pkg.title} />
         </div>
 
         <div>

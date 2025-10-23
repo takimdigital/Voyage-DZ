@@ -36,8 +36,10 @@ async function main() {
       phone: '123-456-7890',
       email: 'agency1@example.com',
       city: 'Djanet',
-      logoUrl: 'https://example.com/logo1.png',
-      userId: user1.id,
+      logoUrl: 'https://picsum.photos/seed/agency1/200',
+      user: {
+        connect: { id: user1.id },
+      },
     },
   });
 
@@ -48,8 +50,10 @@ async function main() {
       phone: '098-765-4321',
       email: 'agency2@example.com',
       city: 'Algiers',
-      logoUrl: 'https://example.com/logo2.png',
-      userId: user2.id,
+      logoUrl: 'https://picsum.photos/seed/agency2/200',
+      user: {
+        connect: { id: user2.id },
+      },
     },
   });
 
@@ -63,8 +67,10 @@ async function main() {
       duration: '10 Days',
       startDate: new Date('2024-11-01'),
       endDate: new Date('2024-11-10'),
-      imageUrls: ['https://example.com/tassili1.jpg', 'https://example.com/tassili2.jpg'],
-      agencyId: agency1.id,
+      imageUrls: ['https://picsum.photos/seed/tassili1/800/600', 'https://picsum.photos/seed/tassili2/800/600'],
+      agency: {
+        connect: { id: agency1.id },
+      },
     },
   });
 
@@ -77,8 +83,10 @@ async function main() {
       duration: '3 Days',
       startDate: new Date('2024-10-15'),
       endDate: new Date('2024-10-18'),
-      imageUrls: ['https://example.com/algiers1.jpg', 'https://example.com/algiers2.jpg'],
-      agencyId: agency2.id,
+      imageUrls: ['https://picsum.photos/seed/algiers1/800/600', 'https://picsum.photos/seed/algiers2/800/600'],
+      agency: {
+        connect: { id: agency2.id },
+      },
     },
   });
 }
