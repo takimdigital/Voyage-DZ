@@ -1,6 +1,6 @@
 "use client"
 
-import { ColumnDef } from "@tanstack/react-table"
+import { ColumnDef, Row } from "@tanstack/react-table"
 import { MoreHorizontal, ArrowUpDown } from "lucide-react"
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -16,6 +16,51 @@ import { Package } from "@prisma/client"
 import { PackageModal } from "@/components/package-modal"
 import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog"
 import { toast } from "sonner"
+
+const ActionsCell = ({ row }: { row: Row<Package> }) => {
+  const pkg = row.original;
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+
+  const onDelete = async () => {
+    setIsLoading(true);
+    try {
+      const response = await fetch(`/api/dashboard/packages/${pkg.id}`, {
+        method: "DELETE",
+      });
+      if (!response.ok) {
+        throw new Error("Failed to delete package.");
+      }
+      toast.success("Package deleted successfully.");
+      router.refresh();
+    } catch (error) {
+      toast.error("Failed to delete package.");
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" className="h-8 w-8 p-0">
+          <span className="sr-only">Open menu</span>
+          <MoreHorizontal className="h-4 w-4" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+        <PackageModal initialData={pkg}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit</DropdownMenuItem>
+        </PackageModal>
+        <DeleteConfirmationDialog onConfirm={onDelete} isLoading={isLoading}>
+          <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>
+        </DeleteConfirmationDialog>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
 
 export const columns: ColumnDef<Package>[] = [
   {
@@ -51,49 +96,6 @@ export const columns: ColumnDef<Package>[] = [
   },
   {
     id: "actions",
-    cell: ({ row }) => {
-      const pkg = row.original
-      const router = useRouter()
-      const [isLoading, setIsLoading] = useState(false)
-
-      const onDelete = async () => {
-        setIsLoading(true)
-        try {
-          const response = await fetch(`/api/dashboard/packages/${pkg.id}`, {
-            method: "DELETE",
-          })
-          if (!response.ok) {
-            throw new Error("Failed to delete package.")
-          }
-          toast.success("Package deleted successfully.")
-          router.refresh()
-        } catch (error) {
-          toast.error("Failed to delete package.")
-          console.error(error)
-        } finally {
-          setIsLoading(false)
-        }
-      }
-
-      return (
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="ghost" className="h-8 w-8 p-0">
-              <span className="sr-only">Open menu</span>
-              <MoreHorizontal className="h-4 w-4" />
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-            <PackageModal initialData={pkg}>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit</DropdownMenuItem>
-            </PackageModal>
-            <DeleteConfirmationDialog onConfirm={onDelete} isLoading={isLoading}>
-              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>
-            </DeleteConfirmationDialog>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      )
-    },
+    cell: ActionsCell,
   },
 ]

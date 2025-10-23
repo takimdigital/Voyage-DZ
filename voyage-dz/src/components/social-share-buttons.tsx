@@ -2,7 +2,6 @@
 
 import { usePathname } from "next/navigation";
 import { Button } from "./ui/button";
-import { Share2 } from "lucide-react";
 
 export function SocialShareButtons({ title }: { title: string }) {
   const pathname = usePathname();

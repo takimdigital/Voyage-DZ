@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -28,7 +27,7 @@ const formSchema = z.object({
   imageUrls: z.string().optional(),
 });
 
-type PackageFormValues = z.infer<typeof formSchema>;
+export type PackageFormValues = z.infer<typeof formSchema>;
 
 interface PackageFormProps {
   initialData?: Package | null;

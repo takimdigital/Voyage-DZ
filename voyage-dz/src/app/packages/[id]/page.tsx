@@ -14,6 +14,7 @@ import {
   CarouselNext,
   CarouselPrevious,
 } from "@/components/ui/carousel";
+import Link from "next/link";
 
 type PackageWithAgency = Package & { agency: Agency };
 
@@ -117,7 +118,9 @@ export default async function PackageDetailPage({
               <CardTitle>Agency Information</CardTitle>
             </CardHeader>
             <CardContent>
-              <h3 className="text-xl font-semibold">{pkg.agency.name}</h3>
+              <Link href={`/agency/${pkg.agency.id}`}>
+                <h3 className="text-xl font-semibold hover:underline">{pkg.agency.name}</h3>
+              </Link>
               <p className="text-muted-foreground">{pkg.agency.city}</p>
               <div className="mt-4 space-y-2">
                 <a href={`tel:${pkg.agency.phone}`} className="block">

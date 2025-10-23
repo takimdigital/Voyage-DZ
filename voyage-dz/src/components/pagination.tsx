@@ -3,7 +3,6 @@
 import {
   Pagination as ShadcnPagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,

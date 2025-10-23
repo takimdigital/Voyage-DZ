@@ -1,11 +1,10 @@
 import { PackageCard } from "@/components/package-card";
 import { db } from "@/lib/db";
-import { Package } from "@prisma/client";
+import { Package, Prisma } from "@prisma/client";
 import { FilterBar } from "@/components/filter-bar";
 import { Pagination } from "@/components/pagination";
 import { Suspense } from "react";
 import { PackageCardSkeleton } from "@/components/package-card-skeleton";
-import { Skeleton } from "@/components/ui/skeleton";
 
 const PACKAGES_PER_PAGE = 6;
 
@@ -16,20 +15,30 @@ interface PackagesPageProps {
     maxPrice?: string;
     sort?: string;
     page?: string;
+    search?: string;
+    agencyId?: string;
   };
 }
 
 async function getPackages(searchParams: PackagesPageProps["searchParams"]) {
-  const { destination, minPrice, maxPrice, sort, page = "1" } = searchParams;
+  const { destination, minPrice, maxPrice, sort, page = "1", search, agencyId } = searchParams;
   const [sortField, sortOrder] = sort?.split("-") || ["createdAt", "desc"];
   const currentPage = parseInt(page, 10);
 
   const where = {
     destination: destination ? { equals: destination } : undefined,
+    agencyId: agencyId ? { equals: agencyId } : undefined,
     price: {
       gte: minPrice ? parseFloat(minPrice) : undefined,
       lte: maxPrice ? parseFloat(maxPrice) : undefined,
     },
+    OR: search
+      ? [
+          { title: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { destination: { contains: search, mode: Prisma.QueryMode.insensitive } },
+          { description: { contains: search, mode: Prisma.QueryMode.insensitive } },
+        ]
+      : undefined,
   };
 
   const totalPackages = await db.package.count({ where });
@@ -55,8 +64,17 @@ async function getDestinations() {
   return destinations.map((d) => d.destination);
 }
 
+async function getAgencies() {
+  const agencies = await db.agency.findMany({
+    select: { id: true, name: true },
+    orderBy: { name: 'asc' },
+  });
+  return agencies;
+}
+
 export default async function PackagesPage({ searchParams }: PackagesPageProps) {
   const destinations = await getDestinations();
+  const agencies = await getAgencies();
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
@@ -69,24 +87,11 @@ export default async function PackagesPage({ searchParams }: PackagesPageProps) 
         </p>
       </header>
 
-      <Suspense fallback={<FilterBarSkeleton />}>
-        <FilterBar destinations={destinations} />
-      </Suspense>
+      <FilterBar destinations={destinations} agencies={agencies} />
 
       <Suspense fallback={<PackageGridSkeleton />}>
         <PackagesGrid searchParams={searchParams} />
       </Suspense>
-    </div>
-  );
-}
-
-function FilterBarSkeleton() {
-  return (
-    <div className="bg-card p-4 rounded-lg mb-8 flex flex-col md:flex-row items-center gap-6">
-      <Skeleton className="h-10 md:w-[200px]" />
-      <Skeleton className="h-10 w-full md:w-[300px]" />
-      <Skeleton className="h-10 md:w-[180px]" />
-      <Skeleton className="h-10 w-24" />
     </div>
   );
 }

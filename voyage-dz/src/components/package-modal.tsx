@@ -8,7 +8,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { PackageForm } from "@/components/package-form";
+import { PackageForm, PackageFormValues } from "@/components/package-form";
 import { Package } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -24,13 +24,13 @@ export const PackageModal: React.FC<PackageModalProps> = ({ children, initialDat
   const [isLoading, setIsLoading] = useState(false);
   const router = useRouter();
 
-  const handleSubmit = async (values: any) => {
+  const handleSubmit = async (values: PackageFormValues) => {
     setIsLoading(true);
     try {
       const formattedValues = {
         ...values,
         price: parseFloat(values.price),
-        imageUrls: values.imageUrls.split(',').map((url: string) => url.trim()),
+        imageUrls: values.imageUrls ? values.imageUrls.split(',').map((url: string) => url.trim()) : [],
       };
 
       const url = initialData

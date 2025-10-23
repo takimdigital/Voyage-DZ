@@ -12,8 +12,14 @@ import {
 import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
+import { Input } from "@/components/ui/input";
 
-export function FilterBar({ destinations }: { destinations: string[] }) {
+interface FilterBarProps {
+  destinations: string[];
+  agencies: { id: string; name: string }[];
+}
+
+export function FilterBar({ destinations, agencies }: FilterBarProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -21,6 +27,7 @@ export function FilterBar({ destinations }: { destinations: string[] }) {
     parseInt(searchParams.get("minPrice") || "0", 10),
     parseInt(searchParams.get("maxPrice") || "5000", 10),
   ]);
+  const [searchQuery, setSearchQuery] = useState(searchParams.get("search") || "");
 
   const createQueryString = useCallback(
     (paramsToUpdate: { name: string; value: string }[]) => {
@@ -53,8 +60,21 @@ export function FilterBar({ destinations }: { destinations: string[] }) {
     router.push(pathname + "?" + createQueryString([{ name, value }]));
   };
 
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleFilterChange("search", searchQuery);
+  };
+
   return (
     <div className="bg-card p-4 rounded-lg mb-8 flex flex-col md:flex-row items-center gap-6">
+      <form onSubmit={handleSearch} className="flex items-center gap-2">
+        <Input
+          placeholder="Search packages..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+        />
+        <Button type="submit">Search</Button>
+      </form>
       <Select onValueChange={(value) => handleFilterChange("destination", value)} defaultValue={searchParams.get("destination") || ""}>
         <SelectTrigger className="md:w-[200px]">
           <SelectValue placeholder="Filter by destination" />
@@ -63,6 +83,17 @@ export function FilterBar({ destinations }: { destinations: string[] }) {
           <SelectItem value="">All Destinations</SelectItem>
           {destinations.map((dest) => (
             <SelectItem key={dest} value={dest}>{dest}</SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+      <Select onValueChange={(value) => handleFilterChange("agencyId", value)} defaultValue={searchParams.get("agencyId") || ""}>
+        <SelectTrigger className="md:w-[200px]">
+          <SelectValue placeholder="Filter by agency" />
+        </SelectTrigger>
+        <SelectContent>
+          <SelectItem value="">All Agencies</SelectItem>
+          {agencies.map((agency) => (
+            <SelectItem key={agency.id} value={agency.id}>{agency.name}</SelectItem>
           ))}
         </SelectContent>
       </Select>
