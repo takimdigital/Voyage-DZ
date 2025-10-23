@@ -12,6 +12,7 @@ import { PackageForm } from "@/components/package-form";
 import { Package } from "@prisma/client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 interface PackageModalProps {
   children: React.ReactNode;
@@ -47,9 +48,11 @@ export const PackageModal: React.FC<PackageModalProps> = ({ children, initialDat
         throw new Error("Something went wrong");
       }
 
+      toast.success(initialData ? "Package updated successfully." : "Package created successfully.");
       setIsOpen(false);
       router.refresh();
     } catch (error) {
+      toast.error("Something went wrong. Please try again.");
       console.error(error);
     } finally {
       setIsLoading(false);

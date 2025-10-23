@@ -14,6 +14,8 @@ import {
 } from "@/components/ui/dropdown-menu"
 import { Package } from "@prisma/client"
 import { PackageModal } from "@/components/package-modal"
+import { DeleteConfirmationDialog } from "@/components/delete-confirmation-dialog"
+import { toast } from "sonner"
 
 export const columns: ColumnDef<Package>[] = [
   {
@@ -63,8 +65,10 @@ export const columns: ColumnDef<Package>[] = [
           if (!response.ok) {
             throw new Error("Failed to delete package.")
           }
+          toast.success("Package deleted successfully.")
           router.refresh()
         } catch (error) {
+          toast.error("Failed to delete package.")
           console.error(error)
         } finally {
           setIsLoading(false)
@@ -84,9 +88,9 @@ export const columns: ColumnDef<Package>[] = [
             <PackageModal initialData={pkg}>
               <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Edit</DropdownMenuItem>
             </PackageModal>
-            <DropdownMenuItem onClick={onDelete} disabled={isLoading}>
-              {isLoading ? "Deleting..." : "Delete"}
-            </DropdownMenuItem>
+            <DeleteConfirmationDialog onConfirm={onDelete} isLoading={isLoading}>
+              <DropdownMenuItem onSelect={(e) => e.preventDefault()}>Delete</DropdownMenuItem>
+            </DeleteConfirmationDialog>
           </DropdownMenuContent>
         </DropdownMenu>
       )

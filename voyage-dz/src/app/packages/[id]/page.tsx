@@ -7,6 +7,13 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { SocialShareButtons } from "@/components/social-share-buttons";
+import {
+  Carousel,
+  CarouselContent,
+  CarouselItem,
+  CarouselNext,
+  CarouselPrevious,
+} from "@/components/ui/carousel";
 
 type PackageWithAgency = Package & { agency: Agency };
 
@@ -65,15 +72,24 @@ export default async function PackageDetailPage({
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
-      {/* Image Gallery Placeholder */}
-      <div className="relative h-96 w-full mb-8">
-        <Image
-          src={pkg.imageUrls[0] || "/placeholder.svg"}
-          alt={pkg.title}
-          fill
-          className="rounded-lg object-cover"
-        />
-      </div>
+      <Carousel className="w-full max-w-4xl mx-auto mb-8">
+        <CarouselContent>
+          {pkg.imageUrls.map((url, index) => (
+            <CarouselItem key={index}>
+              <div className="relative h-96 w-full">
+                <Image
+                  src={url}
+                  alt={`${pkg.title} image ${index + 1}`}
+                  fill
+                  className="rounded-lg object-cover"
+                />
+              </div>
+            </CarouselItem>
+          ))}
+        </CarouselContent>
+        <CarouselPrevious />
+        <CarouselNext />
+      </Carousel>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
@@ -85,14 +101,14 @@ export default async function PackageDetailPage({
               <TabsTrigger value="overview">Overview</TabsTrigger>
               <TabsTrigger value="itinerary">Itinerary</TabsTrigger>
             </TabsList>
-            <TabsContent value="overview" className="mt-4">
+            <TabsContent value="overview" className="mt-4 prose">
               <p>{pkg.description}</p>
             </TabsContent>
             <TabsContent value="itinerary" className="mt-4">
               <p>Itinerary details coming soon.</p>
             </TabsContent>
           </Tabs>
-            <SocialShareButtons title={pkg.title} />
+          <SocialShareButtons title={pkg.title} />
         </div>
 
         <div>
@@ -103,9 +119,14 @@ export default async function PackageDetailPage({
             <CardContent>
               <h3 className="text-xl font-semibold">{pkg.agency.name}</h3>
               <p className="text-muted-foreground">{pkg.agency.city}</p>
-              <p className="mt-4">{pkg.agency.phone}</p>
-              <p>{pkg.agency.email}</p>
-              <Button className="mt-4 w-full">Contact Agency</Button>
+              <div className="mt-4 space-y-2">
+                <a href={`tel:${pkg.agency.phone}`} className="block">
+                  <Button className="w-full">Call Agency</Button>
+                </a>
+                <a href={`mailto:${pkg.agency.email}`} className="block">
+                  <Button className="w-full" variant="outline">Email Agency</Button>
+                </a>
+              </div>
             </CardContent>
           </Card>
         </div>

@@ -5,6 +5,7 @@ import Image from "next/image";
 import type { Metadata } from "next";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { PackageCard } from "@/components/package-card";
+import { Button } from "@/components/ui/button";
 
 type AgencyWithPackages = Agency & { packages: Package[] };
 
@@ -64,45 +65,44 @@ export default async function AgencyProfilePage({
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
-      {/* Agency Header */}
-      <div className="flex flex-col md:flex-row items-center md:items-start gap-8 mb-12">
-        <div className="relative h-48 w-48 rounded-lg overflow-hidden">
-          <Image
-            src={agency.logoUrl || "/placeholder.svg"}
-            alt={agency.name}
-            fill
-            className="object-cover"
-          />
-        </div>
-        <div>
-          <h1 className="text-4xl font-bold">{agency.name}</h1>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div className="md:col-span-1">
+          <div className="relative h-48 w-48 rounded-lg overflow-hidden mb-4">
+            <Image
+              src={agency.logoUrl || "/placeholder.svg"}
+              alt={agency.name}
+              fill
+              className="object-cover"
+            />
+          </div>
+          <h1 className="text-3xl font-bold">{agency.name}</h1>
           <p className="text-lg text-muted-foreground mt-2">{agency.city}</p>
-          <p className="mt-4">{agency.description}</p>
+          <Card className="mt-8">
+            <CardHeader>
+              <CardTitle>Contact Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-2">
+              <a href={`tel:${agency.phone}`} className="block">
+                <Button className="w-full">Call Agency</Button>
+              </a>
+              <a href={`mailto:${agency.email}`} className="block">
+                <Button className="w-full" variant="outline">Email Agency</Button>
+              </a>
+            </CardContent>
+          </Card>
         </div>
-      </div>
-
-      {/* Contact Info */}
-      <Card className="mb-12">
-        <CardHeader>
-          <CardTitle>Contact Information</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p>
-            <strong>Phone:</strong> {agency.phone}
-          </p>
-          <p>
-            <strong>Email:</strong> {agency.email}
-          </p>
-        </CardContent>
-      </Card>
-
-      {/* Packages */}
-      <div>
-        <h2 className="text-3xl font-bold mb-8">Packages from {agency.name}</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-          {agency.packages.map((pkg) => (
-            <PackageCard key={pkg.id} pkg={pkg} />
-          ))}
+        <div className="md:col-span-2">
+          <div className="prose lg:prose-xl mb-12">
+            <p>{agency.description}</p>
+          </div>
+          <div>
+            <h2 className="text-3xl font-bold mb-8">Packages from {agency.name}</h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
+              {agency.packages.map((pkg) => (
+                <PackageCard key={pkg.id} pkg={pkg} />
+              ))}
+            </div>
+          </div>
         </div>
       </div>
     </div>

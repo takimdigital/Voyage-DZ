@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import {
   Select,
   SelectContent,
@@ -9,35 +9,54 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Input } from "@/components/ui/input";
+import { Slider } from "@/components/ui/slider";
 import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
 
 export function FilterBar({ destinations }: { destinations: string[] }) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const [priceRange, setPriceRange] = useState<[number, number]>([
+    parseInt(searchParams.get("minPrice") || "0", 10),
+    parseInt(searchParams.get("maxPrice") || "5000", 10),
+  ]);
 
   const createQueryString = useCallback(
-    (name: string, value: string) => {
+    (paramsToUpdate: { name: string; value: string }[]) => {
       const params = new URLSearchParams(searchParams.toString());
-      if (value) {
-        params.set(name, value);
-      } else {
-        params.delete(name);
-      }
+      paramsToUpdate.forEach(({ name, value }) => {
+        if (value) {
+          params.set(name, value);
+        } else {
+          params.delete(name);
+        }
+      });
       return params.toString();
     },
     [searchParams]
   );
 
+  const handleSliderChange = (value: number[]) => {
+    setPriceRange(value as [number, number]);
+  };
+
+  const handlePriceChange = (value: [number, number]) => {
+    const queryString = createQueryString([
+      { name: "minPrice", value: String(value[0]) },
+      { name: "maxPrice", value: String(value[1]) },
+    ]);
+    router.push(pathname + "?" + queryString);
+  };
+
   const handleFilterChange = (name: string, value: string) => {
-    router.push(pathname + "?" + createQueryString(name, value));
+    router.push(pathname + "?" + createQueryString([{ name, value }]));
   };
 
   return (
-    <div className="bg-card p-4 rounded-lg mb-8 flex flex-col md:flex-row items-center gap-4">
-      <Select onValueChange={(value) => handleFilterChange("destination", value)}>
-        <SelectTrigger className="md:w-[180px]">
+    <div className="bg-card p-4 rounded-lg mb-8 flex flex-col md:flex-row items-center gap-6">
+      <Select onValueChange={(value) => handleFilterChange("destination", value)} defaultValue={searchParams.get("destination") || ""}>
+        <SelectTrigger className="md:w-[200px]">
           <SelectValue placeholder="Filter by destination" />
         </SelectTrigger>
         <SelectContent>
@@ -47,21 +66,18 @@ export function FilterBar({ destinations }: { destinations: string[] }) {
           ))}
         </SelectContent>
       </Select>
-      <div className="flex items-center gap-2">
-        <Input
-          type="number"
-          placeholder="Min price"
-          onChange={(e) => handleFilterChange("minPrice", e.target.value)}
-          defaultValue={searchParams.get("minPrice") || ""}
-        />
-        <Input
-          type="number"
-          placeholder="Max price"
-          onChange={(e) => handleFilterChange("maxPrice", e.target.value)}
-          defaultValue={searchParams.get("maxPrice") || ""}
+      <div className="w-full md:w-[300px]">
+        <Label className="mb-2 block">Price Range: ${priceRange[0]} - ${priceRange[1]}</Label>
+        <Slider
+          min={0}
+          max={5000}
+          step={100}
+          value={priceRange}
+          onValueChange={handleSliderChange}
+          onValueCommit={handlePriceChange}
         />
       </div>
-      <Select onValueChange={(value) => handleFilterChange("sort", value)}>
+      <Select onValueChange={(value) => handleFilterChange("sort", value)} defaultValue={searchParams.get("sort") || "createdAt-desc"}>
         <SelectTrigger className="md:w-[180px]">
           <SelectValue placeholder="Sort by" />
         </SelectTrigger>
@@ -71,7 +87,7 @@ export function FilterBar({ destinations }: { destinations: string[] }) {
           <SelectItem value="price-desc">Price: High to Low</SelectItem>
         </SelectContent>
       </Select>
-      <Button onClick={() => router.push(pathname)}>Clear Filters</Button>
+      <Button onClick={() => router.push(pathname)} variant="outline">Clear Filters</Button>
     </div>
   );
 }
