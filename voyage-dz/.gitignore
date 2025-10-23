@@ -28,6 +28,7 @@ studio.log
 # misc
 .DS_Store
 *.pem
+sitemap.xml
 
 # debug
 npm-debug.log*
