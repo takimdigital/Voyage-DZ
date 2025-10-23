@@ -1,36 +1,95 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Voyage DZ
+
+Voyage DZ is a travel package discovery platform for Algeria, connecting users with the best travel agencies and packages the country has to offer. This project is built with a modern web stack, providing a seamless experience for both travelers and agency partners.
+
+## Tech Stack
+
+- **Framework:** [Next.js](https://nextjs.org/) (with App Router)
+- **Styling:** [Tailwind CSS](https://tailwindcss.com/) & [Shadcn/UI](https://ui.shadcn.com/)
+- **ORM:** [Prisma](https://www.prisma.io/)
+- **Database:** [PostgreSQL](https://www.postgresql.org/)
+- **Authentication:** [NextAuth.js](https://next-auth.js.org/)
+- **Form Management:** [React Hook Form](https://react-hook-form.com/) & [Zod](https://zod.dev/)
+- **TypeScript**
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+- [Node.js](https://nodejs.org/en/) (v20 or later)
+- [Docker](https://www.docker.com/products/docker-desktop/)
+
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/your-username/voyage-dz.git
+cd voyage-dz
+```
+
+### 2. Set up environment variables
+
+Create a `.env` file in the `voyage-dz` directory by copying the example file:
+
+```bash
+cp .env.example .env
+```
+
+Update the `DATABASE_URL` in the `.env` file with your PostgreSQL connection string.
+
+### 3. Install dependencies
+
+```bash
+npm install
+```
+
+### 4. Start the database
+
+Run the PostgreSQL database in a Docker container:
+
+```bash
+docker-compose up -d
+```
+
+### 5. Apply database schema
+
+Push the Prisma schema to your database. This will also create the necessary tables.
+
+```bash
+npx prisma db push
+```
+
+### 6. Seed the database (optional)
+
+To populate the database with sample data, run the seed script:
+
+```bash
+npm run seed
+```
+
+### 7. Run the development server
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) in your browser to see the application.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Features Implemented
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- **User Authentication:** Agencies can sign up and log in to their dashboard using NextAuth.js.
+- **Agency Dashboard:** A protected area for agencies to manage their packages.
+- **Package Management:** Agencies can create, read, update, and delete their travel packages.
+- **Package Discovery:** Public pages for users to browse and view agencies and their packages.
+- **API Routes:** A set of API endpoints for managing agencies and packages.
 
-## Learn More
+## Project Structure
 
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `prisma/`: Contains the Prisma schema and seed script.
+- `src/app/`: The main application directory, following the Next.js App Router structure.
+  - `(auth)/`: Routes related to authentication (login, register).
+  - `api/`: API routes for the application.
+  - `dashboard/`: Protected routes for the agency dashboard.
+  - `agencies/` & `packages/`: Public pages for discovering agencies and packages.
+- `src/components/`: Reusable React components, built with Shadcn/UI.
+- `src/lib/`: Core application logic, including database connection (`db.ts`) and authentication (`auth.ts`).
+- `scripts/`: Additional scripts, such as sitemap generation.
