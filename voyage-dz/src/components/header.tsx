@@ -17,6 +17,18 @@ export function Header() {
         </Link>
         <Link
           className="text-sm font-medium hover:underline underline-offset-4"
+          href="/destinations"
+        >
+          Destinations
+        </Link>
+        <Link
+          className="text-sm font-medium hover:underline underline-offset-4"
+          href="/blog"
+        >
+          Blog
+        </Link>
+        <Link
+          className="text-sm font-medium hover:underline underline-offset-4"
           href="/agencies"
         >
           Agencies

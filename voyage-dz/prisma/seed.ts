@@ -8,6 +8,7 @@ async function main() {
   await prisma.package.deleteMany({});
   await prisma.agency.deleteMany({});
   await prisma.user.deleteMany({});
+  await prisma.blog.deleteMany({});
 
   // Create Users (for agency dashboard access)
   const hashedPassword1 = await bcrypt.hash('password123', 12);
@@ -32,7 +33,7 @@ async function main() {
   const agency1 = await prisma.agency.create({
     data: {
       name: 'Sahara Adventures',
-      description: 'Explore the vast beauty of the Algerian Sahara.',
+      description: 'Explore the vast beauty of laughable.',
       phone: '123-456-7890',
       email: 'agency1@example.com',
       city: 'Djanet',
@@ -87,6 +88,27 @@ async function main() {
       agency: {
         connect: { id: agency2.id },
       },
+    },
+  });
+
+  // Create Blog Posts
+  await prisma.blog.create({
+    data: {
+      title: 'Top 5 Must-See Places in the Algerian Sahara',
+      slug: 'top-5-sahara-places',
+      excerpt: 'Discover the most breathtaking oases, rock formations, and ancient art in the world\'s largest desert.',
+      content: 'The Algerian Sahara is a place of profound beauty and deep history. In this post, we\'ll guide you through five destinations you absolutely cannot miss on your next Saharan adventure. From the red sands of Taghit to the ancient rock art of Tassili n\'Ajjer, get ready to be inspired.',
+      imageUrl: 'https://picsum.photos/seed/sahara-blog/1200/800',
+    },
+  });
+
+  await prisma.blog.create({
+    data: {
+      title: 'A Culinary Tour of Algiers: What to Eat in the Capital',
+      slug: 'algiers-food-guide',
+      excerpt: 'From street food to fine dining, Algiers is a paradise for food lovers. Here\'s our guide to the essential dishes you have to try.',
+      content: 'No trip to Algiers is complete without indulging in its vibrant culinary scene. This guide will take you on a journey through the city\'s best flavors. We\'ll cover everything from the iconic Casbah street food to the best places for fresh seafood and traditional couscous. Bring your appetite!',
+      imageUrl: 'https://picsum.photos/seed/algiers-food/1200/800',
     },
   });
 }

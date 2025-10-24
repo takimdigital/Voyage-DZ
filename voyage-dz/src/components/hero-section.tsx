@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import Image from "next/image";
 
 export function HeroSection() {
   const [query, setQuery] = useState("");
@@ -17,31 +18,32 @@ export function HeroSection() {
   };
 
   return (
-    <section className="w-full py-12 md:py-24 lg:py-32 xl:py-48 bg-gray-100 dark:bg-gray-800">
-      <div className="container px-4 md:px-6">
-        <div className="grid gap-6 lg:grid-cols-[1fr_400px] lg:gap-12 xl:grid-cols-[1fr_600px]">
-          <div className="flex flex-col justify-center space-y-4">
-            <div className="space-y-2">
-              <h1 className="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
-                Découvrez les meilleures offres de voyage en Algérie
-              </h1>
-              <p className="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
-                Trouvez le voyage de vos rêves avec Voyage DZ.
-              </p>
-            </div>
-            <div className="w-full max-w-sm space-y-2">
-              <form onSubmit={handleSearch} className="flex space-x-2">
-                <Input
-                  className="max-w-lg flex-1"
-                  placeholder="Enter a destination"
-                  type="text"
-                  value={query}
-                  onChange={(e) => setQuery(e.target.value)}
-                />
-                <Button type="submit">Search</Button>
-              </form>
-            </div>
-          </div>
+    <section className="relative w-full h-[60vh] md:h-[80vh]">
+      <Image
+        src="/placeholder.svg" // Replace with a high-quality, inspiring image of Algeria
+        alt="Hero background image of an Algerian landscape"
+        fill
+        className="object-cover"
+      />
+      <div className="absolute inset-0 bg-black/60" />
+      <div className="relative z-10 container px-4 md:px-6 h-full flex flex-col justify-center items-center text-center text-white">
+        <h1 className="text-4xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+          Your Algerian Adventure Awaits
+        </h1>
+        <p className="max-w-[700px] text-lg md:text-xl mt-4">
+          From the vibrant streets of Algiers to the timeless sands of the Sahara. Discover authentic travel experiences, curated by the best local agencies.
+        </p>
+        <div className="w-full max-w-md mt-6">
+          <form onSubmit={handleSearch} className="flex space-x-2">
+            <Input
+              className="max-w-lg flex-1 text-black"
+              placeholder="e.g., Oran, Sahara, Djanet"
+              type="text"
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+            />
+            <Button type="submit">Find My Trip</Button>
+          </form>
         </div>
       </div>
     </section>

@@ -5,6 +5,12 @@ import { FilterBar } from "@/components/filter-bar";
 import { Pagination } from "@/components/pagination";
 import { Suspense } from "react";
 import { PackageCardSkeleton } from "@/components/package-card-skeleton";
+import type { Metadata } from 'next';
+
+export const metadata: Metadata = {
+  title: 'Explore Travel Packages | Voyage DZ',
+  description: 'Search, filter, and discover hundreds of travel packages across Algeria. Find your perfect trip by destination, price, and agency.',
+};
 
 const PACKAGES_PER_PAGE = 6;
 
@@ -78,12 +84,12 @@ export default async function PackagesPage({ searchParams }: PackagesPageProps) 
 
   return (
     <div className="container mx-auto py-12 px-4 md:px-6">
-      <header className="mb-8">
+      <header className="mb-8 text-center">
         <h1 className="text-4xl font-bold tracking-tight">
-          Explore Travel Packages
+          Find Your Perfect Algerian Getaway
         </h1>
-        <p className="mt-2 text-lg text-muted-foreground">
-          Find your next adventure from our curated list of travel packages.
+        <p className="mt-2 text-lg text-muted-foreground max-w-2xl mx-auto">
+          Use the filters below to search by destination, price, and more. Your next adventure is just a few clicks away.
         </p>
       </header>
 
@@ -99,14 +105,21 @@ export default async function PackagesPage({ searchParams }: PackagesPageProps) 
 async function PackagesGrid({ searchParams }: PackagesPageProps) {
   const { packages, totalPages } = await getPackages(searchParams);
 
+  if (packages.length === 0) {
+    return (
+      <div className="text-center py-16">
+        <h2 className="text-2xl font-semibold">No Packages Found</h2>
+        <p className="text-muted-foreground mt-2">
+          Try adjusting your search or clearing the filters to find what you&apos;re looking for.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <>
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {packages.length > 0 ? (
-          packages.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} />)
-        ) : (
-          <p className="col-span-3 text-center">No packages found matching your criteria.</p>
-        )}
+        {packages.map((pkg) => <PackageCard key={pkg.id} pkg={pkg} />)}
       </div>
       <div className="mt-12">
         <Pagination totalPages={totalPages} />
