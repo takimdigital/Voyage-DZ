@@ -9,8 +9,13 @@ import { db } from "@/lib/db";
 import Image from "next/image";
 import Link from "next/link";
 
+type Destination = {
+  destination: string;
+  imageUrls: string[];
+};
+
 export async function FeaturedDestinations() {
-  const destinations = await db.package.findMany({
+  const destinations: Destination[] = await db.package.findMany({
     select: { destination: true, imageUrls: true },
     distinct: ["destination"],
     take: 5,
@@ -24,7 +29,7 @@ export async function FeaturedDestinations() {
         </h2>
         <Carousel className="w-full max-w-4xl mx-auto">
           <CarouselContent>
-            {destinations.map((dest) => (
+            {destinations.map((dest: Destination) => (
               <CarouselItem key={dest.destination} className="md:basis-1/2 lg:basis-1/3">
                 <Link href={`/packages?destination=${dest.destination}`}>
                   <div className="relative h-64 w-full">

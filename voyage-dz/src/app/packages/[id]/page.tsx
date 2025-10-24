@@ -74,7 +74,7 @@ export default async function PackageDetailPage({ params }: { params: { id: stri
           <div className="lg:col-span-2">
             <Carousel className="w-full mb-8">
               <CarouselContent>
-                {pkg.imageUrls.map((url, index) => (
+                {pkg.imageUrls.map((url: string, index: number) => (
                   <CarouselItem key={index}>
                     <div className="relative h-96 w-full">
                       <Image src={url} alt={`${pkg.title} image ${index + 1}`} fill className="rounded-lg object-cover" />

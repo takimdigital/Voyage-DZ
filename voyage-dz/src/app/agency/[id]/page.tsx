@@ -102,7 +102,7 @@ export default async function AgencyProfilePage({ params }: { params: { id: stri
               <h2 className="text-2xl font-bold mb-8">Packages from this Agency</h2>
               {agency.packages.length > 0 ? (
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-8">
-                  {agency.packages.map((pkg) => (
+                  {agency.packages.map((pkg: Package) => (
                     <PackageCard key={pkg.id} pkg={pkg} />
                   ))}
                 </div>
